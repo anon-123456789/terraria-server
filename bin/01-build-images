@@ -8,7 +8,7 @@ set -euo pipefail
 #####
 
 # Settings
-CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE:-ghcr.io/anon-123456789/terraria-docker}"
+CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE:-ghcr.io/anon-123456789/terraria-server}"
 LATEST_FOLDER="vanilla"
 
 # Colorize me baby

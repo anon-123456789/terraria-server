@@ -36,3 +36,16 @@ jobs:
       run: ./bin/01-build-images push
       env:
         CI_REGISTRY_IMAGE: ghcr.io/anon-123456789/terraria-server
+  clean:
+    runs-on: ubuntu-latest
+    name: Delete old images
+    steps:
+      - uses: snok/container-retention-policy@v3.0.1
+        with:
+          account: user
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-names: ${{ github.event.repository.name }}
+          image-tags: "!latest"  # target any image that has a tag starting with the word test or dev
+          cut-off: 2w
+          dry-run: false
+    needs: build

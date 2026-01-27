@@ -1,4 +1,4 @@
-FROM mono:slim
+FROM debian:trixie
 
 # Update and install needed utils
 RUN apt-get update && \

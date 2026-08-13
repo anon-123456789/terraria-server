@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVER_FIFO=$(mktemp)
+SERVER_FIFO=$(mktemp -u)
 
 stop() {
     echo "SIGTERM requested, Sending exit command to server..."

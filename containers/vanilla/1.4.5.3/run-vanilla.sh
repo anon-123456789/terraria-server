@@ -1,11 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-SERVER_FIFO=$(mktemp -u)
+SERVER_PID=" "
+
+echo "Removing server fifo /tmp/server.fifo"
+rm -f "/tmp/server.fifo"
 
 stop() {
-    echo "SIGTERM requested, Sending exit command to server..."
-    echo -e "\nexit" > "${SERVER_FIFO}"
+    echo "SIGTERM requested, Sending exit command to server (PID ${SERVER_PID})..."
+    echo -e "\nexit" > "/tmp/server.fifo"
+    wait ${SERVER_PID}
+    echo "Server stopped successfully."
 }
 
 CMD="./TerrariaServer -x64 -config /config/serverconfig.txt -banlist /config/banlist.txt"
@@ -35,15 +40,15 @@ if [ "${world:-null}" != null ]; then
 fi
 
 # Create a fifo that we can write to send commands to the server
-mkfifo "${SERVER_FIFO}"
-echo "Server fifo is set to ${SERVER_FIFO}"
+mkfifo "/tmp/server.fifo"
+echo "Server fifo is set to /tmp/server.fifo"
 
 # Docker sends us a SIGTERM when the container stops, so trap it to actually shutdown the server cleanly
 echo "Trapping SIGTERM..."
 trap "stop" SIGTERM
 
 echo "Starting container, CMD: $CMD $@"
-exec $CMD $@ < <(tail -f "${SERVER_FIFO}" & cat /dev/tty)
-
-echo "Removing server fifo ${SERVER_FIFO}"
-rm -f "${SERVER_FIFO}"
+exec $CMD $@ < <(tail -f "/tmp/server.fifo" & cat /dev/tty) &
+SERVER_PID=$(pgrep TerrariaServer)
+echo "Server PID is ${SERVER_PID}"
+wait ${SERVER_PID}

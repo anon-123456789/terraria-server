@@ -8,7 +8,7 @@ rm -f "/tmp/server.fifo"
 
 stop() {
     echo "SIGTERM requested, Sending exit command to server (PID ${SERVER_PID})..."
-    echo -e "\nexit" > "/tmp/server.fifo"
+    echo -e "\nsay Server is going down NOW!\nexit" > "/tmp/server.fifo"
     wait ${SERVER_PID}
     echo "Server stopped successfully."
 }
